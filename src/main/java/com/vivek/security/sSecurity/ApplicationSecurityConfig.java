@@ -22,9 +22,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/","index","/css/*","/js/*").permitAll()
-                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
+//                .antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMINTRAINEE.name(),ApplicationUserRole.STUDENT.name())
+//                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
+//                .antMatchers("/*").hasRole(ApplicationUserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -46,6 +49,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                                 .roles(ApplicationUserRole.ADMIN.name())
                                 .build();
 
-        return new InMemoryUserDetailsManager(vivek);
+        UserDetails ADMIN_TRAINEE = User.builder()
+                                        .username("admintrainee")
+                                        .password(passwordEncoder.encode("admintrainee"))
+                                        .roles(ApplicationUserRole.ADMINTRAINEE.name())
+                                        .build();
+
+        return new InMemoryUserDetailsManager(vivek,ADMIN,ADMIN_TRAINEE);
     }
 }
