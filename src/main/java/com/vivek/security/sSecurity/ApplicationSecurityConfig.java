@@ -3,6 +3,7 @@ package com.vivek.security.sSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,8 +27,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/","index","/css/*","/js/*").permitAll()
 //                .antMatchers("/management/api/**").hasAnyRole(ApplicationUserRole.ADMINTRAINEE.name(),ApplicationUserRole.STUDENT.name())
-//                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
+                .antMatchers("/api/**").hasRole(ApplicationUserRole.STUDENT.name())
 //                .antMatchers("/*").hasRole(ApplicationUserRole.ADMIN.name())
+                .antMatchers(HttpMethod.DELETE,"/management/api/**").hasAuthority(ApplicationUserPermission.COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.POST,"/management/api/**").hasAuthority(ApplicationUserPermission.COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.PUT,"/management/api/**").hasAuthority(ApplicationUserPermission.COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.GET,"/management/api/**").hasAnyRole(ApplicationUserRole.ADMIN.name(),ApplicationUserRole.ADMINTRAINEE.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -40,19 +45,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails vivek = User.builder()
                                 .username("viveks")
                                 .password(passwordEncoder.encode("viveks"))
-                                .roles(ApplicationUserRole.STUDENT.name())
+//                                .roles(ApplicationUserRole.STUDENT.name())
+                                .authorities(ApplicationUserRole.STUDENT.getGrantedAuthorities())
                                 .build();
 
         UserDetails ADMIN = User.builder()
                                 .username("admin")
                                 .password(passwordEncoder.encode("admin"))
-                                .roles(ApplicationUserRole.ADMIN.name())
+//                                .roles(ApplicationUserRole.ADMIN.name())
+                                .authorities(ApplicationUserRole.ADMIN.getGrantedAuthorities())
                                 .build();
 
         UserDetails ADMIN_TRAINEE = User.builder()
                                         .username("admintrainee")
                                         .password(passwordEncoder.encode("admintrainee"))
-                                        .roles(ApplicationUserRole.ADMINTRAINEE.name())
+//                                        .roles(ApplicationUserRole.ADMINTRAINEE.name())
+                                        .authorities(ApplicationUserRole.ADMINTRAINEE.getGrantedAuthorities())
                                         .build();
 
         return new InMemoryUserDetailsManager(vivek,ADMIN,ADMIN_TRAINEE);
