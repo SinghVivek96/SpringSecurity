@@ -1,8 +1,8 @@
 package com.vivek.security.sSecurity;
 
 public enum ApplicationUserPermission {
-        STUDENT_READ("random:read"),
-        STUDENT_WRITE("random:write"),
+//        STUDENT_READ("random:read"),
+//        STUDENT_WRITE("random:write"),
         COURSE_READ("random:read"),
         COURSE_WRITE("random:write");
 
